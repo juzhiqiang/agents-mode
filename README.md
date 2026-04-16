@@ -1,98 +1,80 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Hello Agents
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+这是一个基于 NestJS 和 LangChain.js 开发的 AI 智能体 (Agents) 演示项目。项目展示了如何实现多种智能体设计模式，包括 ReAct、Planner-Executor 以及具有记忆和逻辑反思能力的垂直领域助手。
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🌟 核心特性
 
-## Description
+### 1. ReAct 搜索智能体 (Search Agent)
+*   **模块位置**: `src/search`
+*   **设计模式**: ReAct (Reasoning and Acting)
+*   **核心功能**: 结合 `Thought` (思考) 和 `Action` (行动) 循环，通过调用外部搜索工具获取实时信息并回答问题。
+*   **集成工具**: 基于 SerpApi 的谷歌搜索。
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 2. 规划-执行智能体 (Plan-and-Solve Agent)
+*   **模块位置**: `src/planSolve`
+*   **设计模式**: Planner-Executor
+*   **核心功能**: 
+    1.  **Planner (规划器)**: 将用户的复杂请求拆解为一系列有序的子任务（行动计划）。
+    2.  **Executor (执行器)**: 严格按照计划顺序执行，每一步的结果都会作为下一步的上下文。
+*   **优势**: 能够有效处理逻辑复杂、步骤众多的长链任务。
 
-## Project setup
+### 3. 智能旅行助手 (Travel Agent)
+*   **模块位置**: `src/app.service.ts`
+*   **功能亮点**:
+    *   **垂直领域工具**: 注册了天气查询 (`get_weather`) 和景点搜索 (`get_attraction`)。
+    *   **长期记忆**: 模拟系统从数据库读取用户偏好，并作为上下文注入。
+    *   **反思机制 (Reflection)**: 当连续尝试失败或用户拒绝建议时，触发反思逻辑，转而询问更精准的需求。
 
-```bash
-$ pnpm install
+## 🛠️ 技术栈
+*   **后端框架**: [NestJS](https://nestjs.com/)
+*   **AI 调度**: [LangChain.js](https://js.langchain.com/)
+*   **模型支持**: OpenAI 兼容协议
+*   **包管理**: pnpm
+
+## 🚀 快速开始
+
+### 1. 环境配置
+在项目根目录创建 `.env` 文件，并填写相关配置：
+
+```env
+# 大模型配置
+LLM_API_KEY=sk-xxxx
+LLM_BASE_URL=https://api.openai.com/v1
+LLM_MODEL_ID=gpt-4o
+LLM_TEMPERATURE=0.7
+
+# 外部工具 API
+SERPAPI_API_KEY=your_serpapi_key
+TVLY_API_KEY=your_tavily_key
 ```
 
-## Compile and run the project
-
+### 2. 安装与运行
 ```bash
-# development
-$ pnpm run start
+# 安装依赖
+pnpm install
 
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+# 启动开发服务器
+pnpm run start:dev
 ```
 
-## Run tests
+## 📡 API 测试接口
 
-```bash
-# unit tests
-$ pnpm run test
+| 功能 | 路由 | 参数 | 示例 |
+| :--- | :--- | :--- | :--- |
+| **旅行助手** | `GET /test` | `prompt` | `/test?prompt=帮我规划北京三日游` |
+| **ReAct 搜索** | `GET /search/react` | `q` | `/search/react?q=英伟达最新发布的显卡参数` |
+| **规划执行** | `GET /plane/test` | `prompt` | `/plane/test?prompt=对比上海和杭州的旅游景点并选一个` |
 
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+## 📂 项目结构
+```text
+src/
+├── search/          # ReAct 搜索智能体模块
+├── planSolve/       # 规划-执行智能体模块
+├── toolbox/         # 工具箱服务 (管理工具注册与调用)
+├── tools/           # 具体工具函数实现 (天气、搜索等)
+├── app.module.ts    # 全局模块配置
+└── main.ts         # 应用入口
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📝 License
+MIT
